@@ -973,13 +973,14 @@ get_inface_by_ip() {
 #
 # ------------------------------------------------------------------------------------------
 get_ip_by_inface() {
-	if [ -z "${1}" ] ; then
-		error "[${FUNCNAME}] Не задан обязательный аргумент — сетевой интерфейс"
-		return
-	fi
-	local net_interface="${1}"
+        if [ -z "${1}" ] ; then
+                error "[${FUNCNAME}] Не задан обязательный аргумент — сетевой интерфейс"
+                return
+        fi
+        local net_interface="${1}"
 
-	/opt/sbin/ip a | grep -F "${net_interface}" | grep -F 'global' | grep -oE "inet ${IP_FILTER}" | cut -d' ' -f2
+        /opt/sbin/ip -4 -o addr show dev "${net_interface}" scope global \
+                | awk '{print $4}' | cut -d'/' -f1 | head -n1
 }
 
 get_net_by_ip() {
